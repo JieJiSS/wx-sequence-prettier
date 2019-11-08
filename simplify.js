@@ -136,7 +136,7 @@ async function main() {
         return 1;
     }
 
-    let [leadingText, elements] = analyzeSequence(lines);
+    let [leadingText, elements] = analyzeSequence(lines.map(line => line.trim()));
     if(elements[0][1] === "") elements = elements.slice(1);
     if(elements.length === 0) {
         console.error("[ERRO] Analyze failed, might be caused by uncommon text patterns.");
