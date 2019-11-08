@@ -6,7 +6,7 @@ const prefixRegEx = /[\(（]?(\d+)[）\)]?/;
 
 /**
  * @description get user input from commad line.
- * Stop with a blank line, a Ctrl+D or a Ctrl+C.
+ * Stop at a blank line, a Ctrl+D or a Ctrl+C.
  * Always resolves.
  * 
  * @param {string} prompt
