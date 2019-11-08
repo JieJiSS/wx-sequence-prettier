@@ -146,8 +146,11 @@ async function main() {
     console.log(leadingText);
     let id = 0;
     console.log(elements.map(el => {
-        if(el[0] === false) return el[1];
-        else return (++id) + ". " + el[1];
+        if(el[0] === false) {
+            // reset id
+            id = 0;
+            return el[1];
+        } else return (++id) + ". " + el[1];
     }).join("\n"));
     return 0;
 }
