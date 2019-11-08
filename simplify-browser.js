@@ -1,40 +1,28 @@
-const readline = require("readline");
+// This is the browser-compatible version
+// dependency: https://unpkg.com/sweetalert@2.1.2/dist/sweetalert.min.js
 
 // pattern = prefix + splitter + element
 const splitterRegEx = /[。:\.\s]\s*/;
 const prefixRegEx = /[\(（]?(\d+)[）\)]?/;
 
 /**
- * @description get user input from commad line.
- * Stop with a blank line, a Ctrl+D or a Ctrl+C.
- * Always resolves.
+ * @description get user input.
  * 
- * @param {string} prompt
+ * @param {string} promptText
  * @returns {Promise<string>}
  */
-const getInput = function getInput(prompt) {
-    return new Promise(function (resolve) {
-        /**
-         * @type {string[]}
-         */
-        var input = [];
-        var rl = readline.createInterface({
-            input: process.stdin,
-            output: process.stdout,
-            prompt: prompt,
-        });
-        rl.prompt();
-        rl.on("line", function (cmd) {
-            if (cmd.trim() === "") {
-                rl.close();
+const getInput = function getInput(promptText) {
+    return new Promise(resolve => {
+        swal(promptText, {
+            content: {
+                element: "textarea",
+                attributes: {
+                    placeholder: "Paste your text here...",
+                    id: "get-input-textarea"
+                }
             }
-            input.push(cmd);
-        });
-        rl.once("SIGINT", function () {
-            resolve(input.join("\n"));
-        });
-        rl.once("close", function () {
-            resolve(input.join("\n"));
+        }).then(() => {
+            resolve(document.getElementById("get-input-textarea").value);
         });
     });
 };
@@ -126,7 +114,7 @@ function analyzeSequence(lines) {
 }
 
 async function main() {
-    const text = await getInput("Paste the original sequence text here: ");
+    const text = (await getInput("Paste the original sequence text here: ")).trim();
     if(text.length === 0) return 0;
 
     const lines = text.split(/\n|\s{4,}/m).filter(str => !!str);
@@ -141,20 +129,33 @@ async function main() {
         console.error("[ERRO] Analyze failed, might be caused by uncommon text patterns.");
         return 2;
     }
-    console.log("\n".repeat(2));
-    console.log(leadingText);
+    let result = "";
+    result += leadingText + "\n";
     let id = 0;
-    console.log(elements.map(el => {
+    result += elements.map(el => {
         if(el[0] === false) {
             // reset id
             id = 0;
             return el[1];
         } else return (++id) + ". " + el[1];
-    }).join("\n"));
+    }).join("\n");
+    swal("Result (please copy):", {
+        content: {
+            element: "textarea",
+            attributes: {
+                placeholder: "",
+                id: "result-textarea"
+            }
+        }
+    });
+    const interval = setInterval(() => {
+        console.log(swal.getState());
+        if(swal.getState().isOpen === true) {
+            clearInterval(interval);
+            document.getElementById("result-textarea").value = result;
+        }
+    }, 200);
     return 0;
 }
 
-main().then(process.exit, err => {
-    console.error(err);
-    process.exit(-1);
-});
+main();
