@@ -71,8 +71,7 @@ function analyzeSequence(lines) {
         const [prefix, element] = line.split(splitterRegEx);
         if(!element) {
             console.warn("[WARN] Failed to analyze line", i);
-            // leave unchanged
-            // @TODO: don't add id when printing this to screen
+            // leave this line unchanged
             sequence[i] = [false, lines[i]];
             continue;
         }
