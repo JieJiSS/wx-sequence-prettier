@@ -153,6 +153,8 @@ async function main() {
         if(swal.getState().isOpen === true) {
             clearInterval(interval);
             document.getElementById("result-textarea").value = result;
+            document.getElementById("result-textarea").select();
+            document.getElementById("result-textarea").focus();
         }
     }, 200);
     return 0;
