@@ -72,7 +72,7 @@ function analyzeSequence(lines) {
         if(!element) {
             console.warn("[WARN] Failed to analyze line", i);
             // leave this line unchanged
-            sequence[i] = [false, lines[i]];
+            sequence[i] = [false, line];
             continue;
         }
 
