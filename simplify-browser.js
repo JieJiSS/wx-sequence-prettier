@@ -46,8 +46,8 @@ const getInput = function getInput(promptText) {
  * @param {string} text 
  */
 function getContent(text) {
-    if(!symbolRegEx.test(text)) return "";
-    const startIndex = text.split(symbolRegEx)[0].length + 1;
+    if(!splitterRegEx.test(text)) return "";
+    const startIndex = text.split(splitterRegEx)[0].length + 1;
     return text.substr(startIndex);
 }
 
