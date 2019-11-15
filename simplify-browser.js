@@ -49,7 +49,7 @@ function analyzeSequence(lines) {
 
     // assume the last line always contains an element
     const patternText = lines[lines.length - 1];
-    if(!splitterRegEx.test(patternText)) return [];
+    if(!splitterRegEx.test(patternText)) return ["", []];
     if(!prefixRegEx.test(patternText)) log.warn("[WARN] Failed to match line id.");
 
     // in case we might meet explanational texts in the first line
