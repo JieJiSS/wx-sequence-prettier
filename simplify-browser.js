@@ -3,13 +3,13 @@
 
 const log = {
     error: function () {
-        swal("Error", [].slice.call(arguments).join(" "), "error");
+        swal("ERROR", [].slice.call(arguments).join(" "), "error");
     },
     log: function () { 
         console.log.apply(console, arguments);
     },
     warn: function () { 
-        swal("Warn", [].slice.call(arguments).join(" "), "warning");
+        swal("WARN", [].slice.call(arguments).join(" "), "warning");
     }
 };
 
