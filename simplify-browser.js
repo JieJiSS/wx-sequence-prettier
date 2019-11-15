@@ -120,7 +120,7 @@ function analyzeSequence(lines) {
             sequence[0] = [false, ""];
             leadingText = lines[0];
         } else {
-            sequence[0] = [false, lines[0].split(splitterRegEx, 2)[1]];
+            sequence[0] = [true, lines[0].split(splitterRegEx, 2)[1]];
         }
     }
 
@@ -144,7 +144,7 @@ async function main() {
         return 2;
     }
     let result = "";
-    result += leadingText + "\n";
+    result += leadingText ? leadingText + "\n" : "";
     let id = 0;
     result += elements.map(el => {
         if(el[0] === false) {
