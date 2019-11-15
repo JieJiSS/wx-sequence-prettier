@@ -17,6 +17,8 @@ const log = {
 const splitterRegEx = /[。:\.\s]\s*/;
 const prefixRegEx = /[\(（]?(\d+)[）\)]?/;
 
+const symbolRegEx = /[\.。，！…（）~“”：；、《》\*\&]/;
+
 /**
  * @description get user input.
  * 
@@ -64,7 +66,7 @@ function analyzeSequence(lines) {
         totalLen += line.length;
         len[i - 1] = line.length;
 
-        const lineSymbolCnt = line.split(/[\.。，！…（）~“”：；、《》\*\&]/).length - 1
+        const lineSymbolCnt = line.split(symbolRegEx).length - 1
         totalSymbolCnt += lineSymbolCnt;
         symbolCnt[i - 1] = lineSymbolCnt;
 
@@ -84,7 +86,7 @@ function analyzeSequence(lines) {
     averageSymbolCnt = totalSymbolCnt / (lines.length - 1);
 
     const firstLineLen = lines[0].length;
-    const firstLineSymbolCnt = lines[0].split(/[。，！…（）~“”：；、《》\*\&]/).length - 1;
+    const firstLineSymbolCnt = lines[0].split(symbolRegEx).length - 1;
 
     let totalDist = 0, avgDist = 0, dist = Array.from(new Array(lines.length - 1), () => 0);
     for(let i = lines.length - 1; i >= 1; i--) {
@@ -108,7 +110,7 @@ function analyzeSequence(lines) {
     );
 
     // 6 * standard deviation
-    if(firstLineDist >= 6 * distStdDeviation) {
+    if(firstLineDist > 6 * distStdDeviation) {
         log.log("[INFO] First line classified as leading text.");
         sequence[0] = [false, ""];
         leadingText = lines[0];
