@@ -49,7 +49,7 @@ function analyzeSequence(lines) {
 
     // assume the last line always contains an element
     const patternText = lines[lines.length - 1];
-    if(!splitterRegEx.test(patternText)) return [];
+    if(!splitterRegEx.test(patternText)) return ["", []];
     if(!prefixRegEx.test(patternText)) console.warn("[WARN] Failed to match line id.");
 
     // in case we might meet explanational texts in the first line
@@ -68,7 +68,7 @@ function analyzeSequence(lines) {
         totalSymbolCnt += lineSymbolCnt;
         symbolCnt[i - 1] = lineSymbolCnt;
 
-        const [prefix, element] = line.split(splitterRegEx);
+        const [prefix, element] = line.split(splitterRegEx, 2);
         if(!element) {
             console.warn("[WARN] Failed to analyze line", i);
             // leave this line unchanged
@@ -118,7 +118,7 @@ function analyzeSequence(lines) {
             sequence[0] = [false, ""];
             leadingText = lines[0];
         } else {
-            sequence[0] = [false, lines[0].split(splitterRegEx)[1]];
+            sequence[0] = [false, lines[0].split(splitterRegEx, 2)[1]];
         }
     }
 
@@ -136,7 +136,7 @@ async function main() {
     }
 
     let [leadingText, elements] = analyzeSequence(lines.map(line => line.trim()));
-    if(elements[0][1] === "") elements = elements.slice(1);
+    if(elements[0] && elements[0][1] === "") elements = elements.slice(1);
     if(elements.length === 0) {
         console.error("[ERRO] Analyze failed, might be caused by uncommon text patterns.");
         return 2;
