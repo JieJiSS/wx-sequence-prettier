@@ -174,7 +174,6 @@ async function main() {
         }
     });
     const interval = setInterval(() => {
-        log.log(swal.getState());
         if(swal.getState().isOpen === true) {
             clearInterval(interval);
             document.getElementById("result-textarea").value = result;
