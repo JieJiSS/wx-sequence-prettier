@@ -99,7 +99,10 @@ function analyzeSequence(lines) {
     const firstLineLen = lines[0].length;
     const firstLineSymbolCnt = lines[0].split(symbolRegEx).length - 1;
 
-    let totalDist = 0, avgDist = 0, dist = Array.from(new Array(lines.length - 1), () => 0);
+    let totalDist = 0, avgDist = 0, dist = [];
+    for(let _ = 0; _ < lines.length - 1; _++) {
+        dist.push(0);
+    }
     for(let i = lines.length - 1; i >= 1; i--) {
         const lineLen = len[i - 1], lineSymbolCnt = symbolCnt[i - 1];
         const lineDist = Math.sqrt(
@@ -148,14 +151,19 @@ async function main() {
         return 1;
     }
 
-    let [leadingText, elements] = analyzeSequence(lines.map(line => line.trim()));
+    const analyzedResult = analyzeSequence(lines.map(line => line.trim()));
+    const leadingText = analyzedResult[0];
+    let elements = analyzedResult[1];
+
     if(elements[0] && elements[0][1] === "") elements = elements.slice(1);
     if(elements.length === 0) {
         log.error("[ERRO] Analyze failed, might be caused by uncommon text patterns.");
         return 2;
     }
+
     let result = "";
     result += leadingText ? leadingText + "\n" : "";
+
     let id = 0;
     result += elements.map(el => {
         if(el[0] === false) {
@@ -164,6 +172,7 @@ async function main() {
             return el[1];
         } else return (++id) + ". " + el[1];
     }).join("\n");
+
     swal("Result (please copy):", {
         content: {
             element: "textarea",
@@ -173,6 +182,7 @@ async function main() {
             }
         }
     });
+
     const interval = setInterval(() => {
         if(swal.getState().isOpen === true) {
             clearInterval(interval);
