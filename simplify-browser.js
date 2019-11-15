@@ -43,6 +43,16 @@ const getInput = function getInput(promptText) {
 
 /**
  * 
+ * @param {string} text 
+ */
+function getContent(text) {
+    if(!symbolRegEx.test(text)) return "";
+    const startIndex = text.split(symbolRegEx)[0].length + 1;
+    return text.substr(startIndex);
+}
+
+/**
+ * 
  * @param {string[]} lines
  * @returns {any[]}
  */
@@ -71,7 +81,7 @@ function analyzeSequence(lines) {
         symbolCnt[i - 1] = lineSymbolCnt;
 
         const splitted = line.split(splitterRegEx);
-        const prefix = splitted[0], element = splitted.slice(1).join("");
+        const prefix = splitted[0], element = getContent(line);
         if(!element) {
             log.warn("[WARN] Failed to analyze line", i);
             // leave this line unchanged
@@ -121,7 +131,7 @@ function analyzeSequence(lines) {
             sequence[0] = [false, ""];
             leadingText = lines[0];
         } else {
-            sequence[0] = [true, lines[0].split(splitterRegEx).slice(1).join("")];
+            sequence[0] = [true, getContent(lines[0])];
         }
     }
 
