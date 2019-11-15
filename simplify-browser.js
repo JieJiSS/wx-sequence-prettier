@@ -1,6 +1,18 @@
 // This is the browser-compatible version
 // dependency: https://unpkg.com/sweetalert@2.1.2/dist/sweetalert.min.js
 
+const log = {
+    error: function () {
+        swal("Error", [].slice.call(arguments).join(" "), "error");
+    },
+    log: function () { 
+        console.log.apply(console, arguments);
+    },
+    warn: function () { 
+        swal("Warn", [].slice.call(arguments).join(" "), "warning");
+    }
+};
+
 // pattern = prefix + splitter + element
 const splitterRegEx = /[。:\.\s]\s*/;
 const prefixRegEx = /[\(（]?(\d+)[）\)]?/;
@@ -38,7 +50,7 @@ function analyzeSequence(lines) {
     // assume the last line always contains an element
     const patternText = lines[lines.length - 1];
     if(!splitterRegEx.test(patternText)) return [];
-    if(!prefixRegEx.test(patternText)) console.warn("[WARN] Failed to match line id.");
+    if(!prefixRegEx.test(patternText)) log.warn("[WARN] Failed to match line id.");
 
     // in case we might meet explanational texts in the first line
     let leadingText = "";
@@ -56,15 +68,15 @@ function analyzeSequence(lines) {
         totalSymbolCnt += lineSymbolCnt;
         symbolCnt[i - 1] = lineSymbolCnt;
 
-        const [prefix, element] = line.split(splitterRegEx);
+        const [prefix, element] = line.split(splitterRegEx, 2);
         if(!element) {
-            console.warn("[WARN] Failed to analyze line", i);
+            log.warn("[WARN] Failed to analyze line", i);
             // leave this line unchanged
             sequence[i] = [false, line];
             continue;
         }
 
-        if(!prefixRegEx.test(prefix)) console.warn("[WARN] Prefix match failed for line", i);
+        if(!prefixRegEx.test(prefix)) log.warn("[WARN] Prefix match failed for line", i);
         sequence[i] = [true, element.trim()];
     }
 
@@ -97,16 +109,16 @@ function analyzeSequence(lines) {
 
     // 6 * standard deviation
     if(firstLineDist >= 6 * distStdDeviation) {
-        console.log("[INFO] First line classified as leading text.");
+        log.log("[INFO] First line classified as leading text.");
         sequence[0] = [false, ""];
         leadingText = lines[0];
     } else {
         if(!splitterRegEx.test(lines[0])) {
-            console.warn("[WARN] First line classified as element, but failed to parse.");
+            log.warn("[WARN] First line classified as element, but failed to parse.");
             sequence[0] = [false, ""];
             leadingText = lines[0];
         } else {
-            sequence[0] = [false, lines[0].split(splitterRegEx)[1]];
+            sequence[0] = [false, lines[0].split(splitterRegEx, 2)[1]];
         }
     }
 
@@ -119,14 +131,14 @@ async function main() {
 
     const lines = text.split(/\n|\s{4,}/m).filter(str => !!str);
     if(lines.length <= 3) {
-        console.error("[ERRO] Too few lines (<=3) to analyze.");
+        log.error("[ERRO] Too few lines (<=3) to analyze.");
         return 1;
     }
 
     let [leadingText, elements] = analyzeSequence(lines.map(line => line.trim()));
-    if(elements[0][1] === "") elements = elements.slice(1);
+    if(elements[0] && elements[0][1] === "") elements = elements.slice(1);
     if(elements.length === 0) {
-        console.error("[ERRO] Analyze failed, might be caused by uncommon text patterns.");
+        log.error("[ERRO] Analyze failed, might be caused by uncommon text patterns.");
         return 2;
     }
     let result = "";
@@ -149,7 +161,7 @@ async function main() {
         }
     });
     const interval = setInterval(() => {
-        console.log(swal.getState());
+        log.log(swal.getState());
         if(swal.getState().isOpen === true) {
             clearInterval(interval);
             document.getElementById("result-textarea").value = result;
