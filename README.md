@@ -1,4 +1,4 @@
-This code snippet is written to simplify human-generated text-based sequences.
+This code snippet is written to prettify human-generated text-based sequences.
 
 example:
 
